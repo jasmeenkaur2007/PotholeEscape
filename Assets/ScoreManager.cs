@@ -1,0 +1,24 @@
+using UnityEngine;
+using TMPro;
+
+public class ScoreManager : MonoBehaviour
+{
+    public TextMeshProUGUI scoreText;
+
+    private float score = 0f;
+    private bool gameOver = false;
+
+    void Update()
+    {
+        if (!gameOver)
+        {
+            score += Time.deltaTime * 10;
+            scoreText.text = "Score: " + Mathf.FloorToInt(score);
+        }
+    }
+
+    public void StopScore()
+    {
+        gameOver = true;
+    }
+}

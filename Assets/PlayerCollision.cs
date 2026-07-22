@@ -6,21 +6,38 @@ using TMPro;
 public class PlayerCollision : MonoBehaviour
 {
     public TextMeshProUGUI gameOverText;
+    public ScoreManager scoreManager;
+    public AudioSource crashSound;
+    public AudioSource engineSound;
+
+    private bool hasCrashed = false;
 
     void Start()
     {
-        // Hide Game Over text when game starts
         gameOverText.gameObject.SetActive(false);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (collision.gameObject.CompareTag("Obstacle") && !hasCrashed)
         {
-            // Show Game Over text
+            hasCrashed = true;
+
+            // Stop engine sound
+            if (engineSound != null)
+                engineSound.Stop();
+
+            // Play crash sound
+            if (crashSound != null)
+                crashSound.Play();
+
+            // Stop score
+            scoreManager.StopScore();
+
+            // Show Game Over
             gameOverText.gameObject.SetActive(true);
 
-            // Stop player movement
+            // Stop car movement
             GetComponent<PlayerMovement>().enabled = false;
 
             // Restart game after 5 seconds
@@ -31,6 +48,9 @@ public class PlayerCollision : MonoBehaviour
     IEnumerator RestartGame()
     {
         yield return new WaitForSeconds(5f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().name
+        );
     }
 }
